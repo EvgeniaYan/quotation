@@ -15,4 +15,10 @@ public class Elvl {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String isin;
+    private Double value;
+
+    public Elvl(String isin, Double value) {
+        this.isin = isin;
+        this.value = value;
+    }
 }

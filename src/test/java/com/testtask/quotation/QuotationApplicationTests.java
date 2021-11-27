@@ -19,7 +19,10 @@ class QuotationApplicationTests {
 	private TestRestTemplate restTemplate;
 
 	@Test
-	void contextLoads() throws Exception{
+	void contextLoads() throws Exception{	}
+
+	@Test
+	void uploadTestData() throws Exception{
 		controller.loadQuotes("RU000A0JX0J2", "100.2", "101.9");
 	}
 
