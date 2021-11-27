@@ -4,7 +4,9 @@ import com.testtask.quotation.model.Elvl;
 import com.testtask.quotation.model.Quote;
 import com.testtask.quotation.repository.ElvlRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ElvlService {
     @Autowired
     ElvlRepository elvlRepository;
@@ -22,7 +24,6 @@ public class ElvlService {
             if (quote.getAsk() < elvl.getValue()) {
                 elvl.setValue(quote.getAsk());
             }
-
         }
     }
 }

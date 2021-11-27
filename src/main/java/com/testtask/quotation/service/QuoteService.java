@@ -1,15 +1,10 @@
 package com.testtask.quotation.service;
 
-import com.testtask.quotation.event.AddToQueueEvent;
-import com.testtask.quotation.model.Elvl;
 import com.testtask.quotation.model.Quote;
 import com.testtask.quotation.model.QuoteHistory;
 import com.testtask.quotation.repository.ElvlRepository;
 import com.testtask.quotation.repository.QuoteHistoryRepository;
-import com.testtask.quotation.repository.QuoteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,8 +13,6 @@ public class QuoteService {
 
     @Autowired
     private QuoteHistoryRepository quoteHistoryRepository;
-    @Autowired
-    private ElvlRepository elvlRepository;
     @Autowired
     private ProcessingService processingService;
 
