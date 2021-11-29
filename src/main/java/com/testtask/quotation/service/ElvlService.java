@@ -4,9 +4,9 @@ import com.testtask.quotation.model.Elvl;
 import com.testtask.quotation.dto.QuoteDTO;
 import com.testtask.quotation.repository.ElvlRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class ElvlService {
     @Autowired
     ElvlRepository elvlRepository;
