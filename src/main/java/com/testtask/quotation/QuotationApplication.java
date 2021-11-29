@@ -8,8 +8,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableAsync
 public class QuotationApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(QuotationApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(QuotationApplication.class, args);
+    }
 
 }

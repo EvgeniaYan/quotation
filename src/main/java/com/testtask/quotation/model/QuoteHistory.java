@@ -1,6 +1,5 @@
 package com.testtask.quotation.model;
 
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;

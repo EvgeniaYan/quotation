@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.zip.DataFormatException;
 
 @Service
 public class QuoteService {
@@ -24,9 +25,10 @@ public class QuoteService {
     public void saveQuoteToDatabase(String isin, Double bit, Double ask) throws Exception{
         QuoteDTO quote = quoteValidation(isin, bit, ask);
         if(quote == null)
-            throw new Exception("Not valid data");
+            throw new DataFormatException("Not valid data");
         QuoteHistory history = new QuoteHistory(quote.getIsin(), "created");
         quoteHistoryRepository.save(history);
+        System.out.println("QuoteHistory updated: isin " + history.getIsin() + "value " + history.getIsin());
         processingService.addToQueue(quote);
     }
 
@@ -38,6 +40,11 @@ public class QuoteService {
 
     public List<QueueWithElvlDTO> findQueueWithElvl(){
         return elvlRepository.findQueueWithElvl();
+    }
+
+    public Double findElvlByIsin(String isin){
+        return elvlRepository.findByIsin(isin) != null ? elvlRepository.findByIsin(isin).getValue()
+                : null;
         //return elvlRepository.findAll();
     }
 }

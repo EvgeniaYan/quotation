@@ -11,10 +11,8 @@ public class ElvlService {
     @Autowired
     ElvlRepository elvlRepository;
 
-    private static volatile Elvl elvl;
-
     public synchronized void createElvl(QuoteDTO quote) {
-        elvl = elvlRepository.findByIsin(quote.getIsin());
+        Elvl elvl = elvlRepository.findByIsin(quote.getIsin());
         if (elvl == null) {
             elvl = new Elvl(quote.getIsin(), quote.getBid());
         } else {
@@ -26,5 +24,6 @@ public class ElvlService {
             }
         }
         elvlRepository.save(elvl);
+        System.out.println("Elvl updated: isin " + elvl.getIsin() + "value " + elvl.getValue());
     }
 }

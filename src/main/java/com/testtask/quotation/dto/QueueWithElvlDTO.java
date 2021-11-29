@@ -1,10 +1,12 @@
 package com.testtask.quotation.dto;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import java.util.Date;
 
 @Getter @Setter
+@RequiredArgsConstructor
 public class QueueWithElvlDTO {
     private Date CREATE_WHEN;
     private String status;
