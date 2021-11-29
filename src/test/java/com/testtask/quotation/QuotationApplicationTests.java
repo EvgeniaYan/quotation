@@ -10,9 +10,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
@@ -46,18 +48,22 @@ public class QuotationApplicationTests {
 		Gson gson = new Gson();
 		String json = gson.toJson(data);
 
-		mockMvc.perform(post("/api/load")
-						.contentType(MediaType.APPLICATION_JSON).content(json))
-				.andExpect(status().isOk());
-        /*mockMvc.perform(post("/")
-						.contentType(new MediaType(
-                                MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), StandardCharsets.UTF_8))
-                )
-                .andExpect(status().isBadRequest());*/
+		for (int i = 0; i <= 20; i++){
+			mockMvc.perform(post("/api/load")
+							.contentType(MediaType.APPLICATION_JSON).content(json))
+					.andExpect(status().isCreated());
+		}
 
-    }
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/getAllData"))
+				.andDo(print());
+	}
 
-	private class DataClass {
-		public DataClass(String s1, String s2, String s3) {		}
+	private static class DataClass {
+		String isin, bid, ask;
+		public DataClass(String s1, String s2, String s3) {
+			isin= s1;
+			bid = s2;
+			ask = s3;
+		}
 	}
 }

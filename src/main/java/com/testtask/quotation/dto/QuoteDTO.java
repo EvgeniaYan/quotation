@@ -1,4 +1,4 @@
-package com.testtask.quotation.model;
+package com.testtask.quotation.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -8,12 +8,12 @@ import javax.persistence.*;
 
 @Getter @Setter
 @RequiredArgsConstructor
-public class Quote {
+public class QuoteDTO {
     private String isin;
     private Double bid;
     private Double ask;
 
-    public Quote(String isin, Double bid, Double ask) {
+    public QuoteDTO(String isin, Double bid, Double ask) {
         this.isin = isin;
         this.bid = bid;
         this.ask = ask;
