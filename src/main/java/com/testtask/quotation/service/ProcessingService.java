@@ -24,7 +24,7 @@ public class ProcessingService implements ApplicationEventPublisherAware {
     @Transactional
     public void startProcessing(){
         if (executorService == null || executorService.isShutdown()) {
-            executorService = Executors.newFixedThreadPool(1);
+            executorService = Executors.newFixedThreadPool(3);
             executorService.execute(() -> {
                 QuoteDTO quote;
                 while ((quote = queue.poll()) != null) {

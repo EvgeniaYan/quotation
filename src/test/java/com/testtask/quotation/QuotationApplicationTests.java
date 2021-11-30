@@ -14,6 +14,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.concurrent.CompletableFuture;
+
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -125,24 +127,76 @@ public class QuotationApplicationTests {
         assertEquals("100.9", content);
     }
 
+    //много запросов одновременно
     @Test
     public void uploadTestData() throws Exception {
         for (int i = 0; i < 100; i++) {
             String bid = System.currentTimeMillis() % 2 > 0 ? "99." + i : "100." + i;
             String ask = System.currentTimeMillis() % 2 > 0 ? "100." + i : "101." + i;
-            String isin = System.currentTimeMillis() % 2 > 0 ? ("RU000A0JX0J" + i).substring(0, 12) : "RU000A0JX0J1";
+            String isin = ("RU000A0JX0J" + i).substring(0, 12);
             DataClass data = new DataClass(isin, bid, ask);
             String json = gson.toJson(data);
             mockMvc.perform(post("/api/load")
                             .contentType(MediaType.APPLICATION_JSON).content(json))
                     .andExpect(status().isCreated());
         }
-        Thread.sleep(5000);
+        Thread.sleep(3000);
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/getAllData"))
                 .andReturn();
         String[] split = result.getResponse().getContentAsString().split(",");
         assertEquals(Integer.parseInt(split[0]), 100);
         assertEquals(Integer.parseInt(split[1]), 10);
+    }
+
+    //несколько запросов одновременно через потоки
+    @Test
+    public void uploadTestDataThreads() throws Exception {
+        CompletableFuture future1 = CompletableFuture.runAsync(() -> {
+            DataClass data = new DataClass("RU000A0JX0J5", "100.2", "100.9");
+            String json = gson.toJson(data);
+            try {
+                mockMvc.perform(post("/api/load")
+                                .contentType(MediaType.APPLICATION_JSON).content(json))
+                        .andExpect(status().isCreated());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        CompletableFuture future2 = CompletableFuture.runAsync(() -> {
+            DataClass data = new DataClass("RU000A0JX0J5", "100.5", "100.9");
+            String json = gson.toJson(data);
+            try {
+                mockMvc.perform(post("/api/load")
+                                .contentType(MediaType.APPLICATION_JSON).content(json))
+                        .andExpect(status().isCreated());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        CompletableFuture future3 = CompletableFuture.runAsync(() -> {
+            DataClass data = new DataClass("RU000A0JX0J6", "100.2", "100.9");
+            String json = gson.toJson(data);
+            try {
+                mockMvc.perform(post("/api/load")
+                                .contentType(MediaType.APPLICATION_JSON).content(json))
+                        .andExpect(status().isCreated());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        Thread.sleep(2000);
+        CompletableFuture.allOf(future1, future2, future3).thenAccept(v -> {
+            MvcResult result;
+            try {
+                result = mockMvc.perform(MockMvcRequestBuilders.get("/api/getAllData"))
+                        .andReturn();
+                String[] split = result.getResponse().getContentAsString().split(",");
+                assertEquals(Integer.parseInt(split[0]), 3);
+                assertEquals(Integer.parseInt(split[1]), 2);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).get();
     }
 
     private static class DataClass {

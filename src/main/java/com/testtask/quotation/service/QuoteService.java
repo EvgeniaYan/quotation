@@ -28,7 +28,7 @@ public class QuoteService {
             throw new DataFormatException("Not valid data");
         QuoteHistory history = new QuoteHistory(quote.getIsin(), "created");
         quoteHistoryRepository.save(history);
-        System.out.println("QuoteHistory updated: isin " + history.getIsin() + "value " + history.getIsin());
+        System.out.println("QuoteHistory updated: isin " + history.getIsin() + " value " + history.getIsin());
         processingService.addToQueue(quote);
     }
 
