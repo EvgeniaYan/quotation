@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface QuoteHistoryRepository extends JpaRepository<QuoteHistory, Long > {
+public interface QuoteHistoryRepository extends JpaRepository<QuoteHistory, Long> {
 }

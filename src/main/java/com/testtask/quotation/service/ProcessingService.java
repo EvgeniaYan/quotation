@@ -22,7 +22,7 @@ public class ProcessingService implements ApplicationEventPublisherAware {
     private ApplicationEventPublisher publisher;
 
     @Transactional
-    public void startProcessing(){
+    public void startProcessing() {
         if (executorService == null || executorService.isShutdown()) {
             executorService = Executors.newFixedThreadPool(3);
             executorService.execute(() -> {

@@ -22,9 +22,9 @@ public class QuoteService {
     @Autowired
     private ProcessingService processingService;
 
-    public void saveQuoteToDatabase(String isin, Double bid, Double ask) throws Exception{
+    public void saveQuoteToDatabase(String isin, Double bid, Double ask) throws Exception {
         QuoteDTO quote = quoteValidation(isin, bid, ask);
-        if(quote == null)
+        if (quote == null)
             throw new DataFormatException("Not valid data");
         QuoteHistory history = new QuoteHistory(quote.getIsin(), "created");
         quoteHistoryRepository.save(history);
@@ -32,7 +32,7 @@ public class QuoteService {
         processingService.addToQueue(quote);
     }
 
-    private QuoteDTO quoteValidation(String isin, Double bid, Double ask){
+    private QuoteDTO quoteValidation(String isin, Double bid, Double ask) {
         if (bid == null)
             bid = ask;
         if (isin == null || ask == null || bid > ask || isin.length() != ISIN_SIZE)
@@ -40,20 +40,20 @@ public class QuoteService {
         return new QuoteDTO(isin, bid, ask);
     }
 
-    public List<Elvl> findAllElvls(){
+    public List<Elvl> findAllElvls() {
         return elvlRepository.findAll();
     }
 
-    public void removeAll(){
+    public void removeAll() {
         elvlRepository.deleteAll();
         quoteHistoryRepository.deleteAll();
     }
 
-    public List<QuoteHistory> findAllQuotes(){
+    public List<QuoteHistory> findAllQuotes() {
         return quoteHistoryRepository.findAll();
     }
 
-    public Double findElvlByIsin(String isin){
+    public Double findElvlByIsin(String isin) {
         return elvlRepository.findByIsin(isin) != null ? elvlRepository.findByIsin(isin).getValue()
                 : null;
     }
