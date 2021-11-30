@@ -35,13 +35,18 @@ public class QuoteService {
     private QuoteDTO quoteValidation(String isin, Double bid, Double ask){
         if (bid == null)
             bid = ask;
-        if (bid > ask || isin.length() != ISIN_SIZE)
+        if (isin == null || ask == null || bid > ask || isin.length() != ISIN_SIZE)
             return null;
         return new QuoteDTO(isin, bid, ask);
     }
 
     public List<Elvl> findAllElvls(){
         return elvlRepository.findAll();
+    }
+
+    public void removeAll(){
+        elvlRepository.deleteAll();
+        quoteHistoryRepository.deleteAll();
     }
 
     public List<QuoteHistory> findAllQuotes(){

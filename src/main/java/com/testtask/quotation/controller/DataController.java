@@ -29,7 +29,7 @@ public class DataController {
     }
 
     @GetMapping("/api/getElvlByIsin")
-    public ResponseEntity getElvlByIsin(@RequestParam(name = "isin") String isin, HttpServletResponse httpResponse) {
+    public ResponseEntity<Double> getElvlByIsin(@RequestParam(name = "isin") String isin, HttpServletResponse httpResponse) {
         Double elvlByIsin = quoteService.findElvlByIsin(isin);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -37,11 +37,16 @@ public class DataController {
     }
 
     @GetMapping("/api/getAllData")
-    public ResponseEntity getAllData(HttpServletResponse httpResponse) {
+    public ResponseEntity<String> getAllData(HttpServletResponse httpResponse) {
         int qCount = quoteService.findAllQuotes().size();
         int eCount = quoteService.findAllElvls().size();
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(qCount + "," + eCount);
+    }
+
+    @GetMapping("/api/removeAllForTests")
+    public void removeAllForTests(HttpServletResponse httpResponse) {
+        quoteService.removeAll();
     }
 }
