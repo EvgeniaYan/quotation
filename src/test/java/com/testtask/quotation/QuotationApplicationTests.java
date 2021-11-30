@@ -48,14 +48,12 @@ public class QuotationApplicationTests {
                 .andExpect(status().isExpectationFailed());
     }
 
-    //некорректные данные  isin не 12 символов
+    //некорректные данные - isin не 12 символов
     @Test
     public void incorrectDataTooBigIsin() throws Exception {
         DataClass data = new DataClass("INCORRECTISIN", "100.8", "100.9");
-        String json = gson.toJson(data);
-
         mockMvc.perform(post("/api/load")
-                        .contentType(MediaType.APPLICATION_JSON).content(json))
+                        .contentType(MediaType.APPLICATION_JSON).content(gson.toJson(data)))
                 .andExpect(status().isExpectationFailed());
     }
 
@@ -63,10 +61,8 @@ public class QuotationApplicationTests {
     @Test
     public void newElvl() throws Exception {
         DataClass data = new DataClass("RU000A0JX0J2", "100.2", "101.9");
-        String json = gson.toJson(data);
-
         mockMvc.perform(post("/api/load")
-                        .contentType(MediaType.APPLICATION_JSON).content(json))
+                        .contentType(MediaType.APPLICATION_JSON).content(gson.toJson(data)))
                 .andExpect(status().isCreated());
         Thread.sleep(2000);
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/getElvlByIsin")
@@ -78,33 +74,76 @@ public class QuotationApplicationTests {
     //Если ask < elvl, то elvl = ask
     @Test
     public void askBiggerElvl() throws Exception {
+        DataClass data = new DataClass("RU000A0JX0J3", "100.2", "100.9");
+        mockMvc.perform(post("/api/load")
+                        .contentType(MediaType.APPLICATION_JSON).content(gson.toJson(data)))
+                .andExpect(status().isCreated());
+        Thread.sleep(2000);
+        data = new DataClass("RU000A0JX0J3", "100.0", "100.1");
+        mockMvc.perform(post("/api/load")
+                        .contentType(MediaType.APPLICATION_JSON).content(gson.toJson(data)))
+                .andExpect(status().isCreated());
+        Thread.sleep(2000);
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/getElvlByIsin")
+                .param("isin", data.isin)).andReturn();
+        String content = result.getResponse().getContentAsString();
+        assertEquals("100.1", content);
 
     }
 
-
     //Если bid > elvl, то elvl = bid
-	/*@Test
-	public void correctBidBi*/
+    @Test
+    public void bidBiggerElvl() throws Exception {
+        DataClass data = new DataClass("RU000A0JX0J4", "100.2", "100.9");
+        mockMvc.perform(post("/api/load")
+                        .contentType(MediaType.APPLICATION_JSON).content(gson.toJson(data)))
+                .andExpect(status().isCreated());
+        Thread.sleep(2000);
+        data = new DataClass("RU000A0JX0J4", "100.5", "101.0");
+        mockMvc.perform(post("/api/load")
+                        .contentType(MediaType.APPLICATION_JSON).content(gson.toJson(data)))
+                .andExpect(status().isCreated());
+        Thread.sleep(2000);
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/getElvlByIsin")
+                .param("isin", data.isin)).andReturn();
+        String content = result.getResponse().getContentAsString();
+        assertEquals("100.5", content);
 
+    }
 
-/*    @Test
-	public void uploadTestData() throws Exception {
-        //controller.loadQuotes("RU000A0JX0J2", "100.2", "101.9");
+    //Если bid отсутствует, то elvl = ask
+    @Test
+    public void emptyBid() throws Exception {
+        DataClass data = new DataClass("RU000A0JX0J3", null, "100.9");
+        mockMvc.perform(post("/api/load")
+                        .contentType(MediaType.APPLICATION_JSON).content(gson.toJson(data)))
+                .andExpect(status().isCreated());
+        Thread.sleep(2000);
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/getElvlByIsin")
+                .param("isin", data.isin)).andReturn();
+        String content = result.getResponse().getContentAsString();
+        assertEquals("100.9", content);
+    }
 
-		for (int i = 0; i <= 20; i++){
-			String bid = System.currentTimeMillis() % 2 > 0 ? "100." + i : "99." + i;
-			String ask = System.currentTimeMillis() % 2 > 0 ? "101." + i : "100." + i;
-			String isin = System.currentTimeMillis() % 2 > 0 ? "RU000A0JX0J" + i : "RU000A0JX0J1";
-			DataClass data = new DataClass(isin, bid, ask);
-			String json = gson.toJson(data);
-			mockMvc.perform(post("/api/load")
-							.contentType(MediaType.APPLICATION_JSON).content(json))
-					.andExpect(status().isCreated());
-		}
-
-		mockMvc.perform(MockMvcRequestBuilders.get("/api/getAllData"))
-				.andDo(print());
-	}*/
+    @Test
+    public void uploadTestData() throws Exception {
+        for (int i = 0; i < 100; i++) {
+            String bid = System.currentTimeMillis() % 2 > 0 ? "99." + i : "100." + i;
+            String ask = System.currentTimeMillis() % 2 > 0 ? "100." + i : "101." + i;
+            String isin = System.currentTimeMillis() % 2 > 0 ? ("RU000A0JX0J" + i).substring(0, 12) : "RU000A0JX0J1";
+            DataClass data = new DataClass(isin, bid, ask);
+            String json = gson.toJson(data);
+            mockMvc.perform(post("/api/load")
+                            .contentType(MediaType.APPLICATION_JSON).content(json))
+                    .andExpect(status().isCreated());
+        }
+        Thread.sleep(5000);
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/getAllData"))
+                .andReturn();
+        String[] split = result.getResponse().getContentAsString().split(",");
+        assertEquals(Integer.parseInt(split[0]), 100);
+        assertEquals(Integer.parseInt(split[1]), 10);
+    }
 
     private static class DataClass {
         String isin, bid, ask;
@@ -115,9 +154,6 @@ public class QuotationApplicationTests {
             ask = s3;
         }
     }
-
-
-    //Если bid отсутствует, то elvl = ask
 
 
 }

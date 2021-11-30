@@ -24,6 +24,6 @@ public class ElvlService {
             }
         }
         elvlRepository.save(elvl);
-        System.out.println("Elvl updated: isin " + elvl.getIsin() + "value " + elvl.getValue());
+        System.out.println("Elvl updated: isin " + elvl.getIsin() + " value " + elvl.getValue());
     }
 }
