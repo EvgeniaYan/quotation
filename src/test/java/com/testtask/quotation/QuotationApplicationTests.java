@@ -1,9 +1,11 @@
 package com.testtask.quotation;
 
 import com.google.gson.Gson;
+import org.jboss.logging.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -24,6 +26,9 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @SpringBootTest(classes = {QuotationApplication.class})
 public class QuotationApplicationTests {
     private MockMvc mockMvc;
+
+    @Mock
+    Logger logger;
 
     @Autowired
     private WebApplicationContext webApplicationContext;

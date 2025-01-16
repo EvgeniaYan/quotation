@@ -2,7 +2,8 @@ package com.testtask.quotation.controller;
 
 import com.testtask.quotation.dto.QuoteDTO;
 import com.testtask.quotation.service.QuoteService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -12,8 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.zip.DataFormatException;
 
 @Controller
+@AllArgsConstructor
 public class DataController {
-    @Autowired
+    private final Logger logger;
     private QuoteService quoteService;
 
     @PostMapping(value = {"/api/load"})
@@ -23,8 +25,10 @@ public class DataController {
             httpResponse.setStatus(HttpStatus.CREATED.value());
         } catch (DataFormatException e) {
             httpResponse.setStatus(HttpStatus.EXPECTATION_FAILED.value());
+            logger.error(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error(e.getMessage());
         }
     }
 

@@ -3,13 +3,18 @@ package com.testtask.quotation.service;
 import com.testtask.quotation.model.Elvl;
 import com.testtask.quotation.dto.QuoteDTO;
 import com.testtask.quotation.repository.ElvlRepository;
+import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class ElvlService {
-    @Autowired
-    ElvlRepository elvlRepository;
+
+    private final ElvlRepository elvlRepository;
+
+    private final Logger logger;
 
     public synchronized void createElvl(QuoteDTO quote) {
         Elvl elvl = elvlRepository.findByIsin(quote.getIsin());
@@ -24,6 +29,6 @@ public class ElvlService {
             }
         }
         elvlRepository.save(elvl);
-        System.out.println("Elvl updated: isin " + elvl.getIsin() + " value " + elvl.getValue());
+        logger.info("Elvl updated: isin " + elvl.getIsin() + " value " + elvl.getValue());
     }
 }

@@ -35,6 +35,7 @@ public class ProcessingService implements ApplicationEventPublisherAware {
         }
     }
 
+    @Transactional
     public void addToQueue(QuoteDTO quote) {
         queue.add(quote);
         AddToQueueEvent addToQueueEvent = new AddToQueueEvent(this);
