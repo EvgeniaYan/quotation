@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
 @AllArgsConstructor
 public class ElvlService {
@@ -16,8 +18,9 @@ public class ElvlService {
 
     private final Logger logger;
 
+    @Transactional
     public synchronized void createElvl(QuoteDTO quote) {
-        Elvl elvl = elvlRepository.findByIsin(quote.getIsin());
+        Elvl elvl = elvlRepository.findByIsin(quote.getIsin()).orElse(null);
         if (elvl == null) {
             elvl = new Elvl(quote.getIsin(), quote.getBid());
         } else {

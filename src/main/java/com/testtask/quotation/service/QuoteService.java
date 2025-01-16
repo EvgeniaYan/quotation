@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Objects;
 import java.util.zip.DataFormatException;
 
 @Service
@@ -58,7 +59,6 @@ public class QuoteService {
     }
 
     public Double findElvlByIsin(String isin) {
-        return elvlRepository.findByIsin(isin) != null ? elvlRepository.findByIsin(isin).getValue()
-                : null;
+        return Objects.requireNonNull(elvlRepository.findByIsin(isin).orElse(null)).getValue();
     }
 }
